@@ -66,3 +66,100 @@ Open a Command Prompt and run:
    ```
    terragrunt --version
    ```
+
+
+
+# Azure Setup Guide
+
+This guide provides step-by-step instructions for setting up Azure CLI, logging into your Azure account, creating a Service Principal, and managing subscriptions.
+
+## Table of Contents
+1. [Install Azure CLI](#install-azure-cli)
+2. [Log in to Azure](#log-in-to-azure)
+3. [Create a Service Principal](#create-a-service-principal)
+4. [Manage Multiple Subscriptions](#manage-multiple-subscriptions)
+
+## Install Azure CLI
+
+1. Choose your operating system:
+   - [Windows](#windows)
+   - [macOS](#macos)
+   - [Linux](#linux)
+
+### Windows
+
+1. Download the MSI installer from the [official Microsoft website](https://aka.ms/installazurecliwindows).
+2. Run the installer and follow the on-screen instructions.
+3. Restart your command prompt or PowerShell to use Azure CLI.
+
+### macOS
+
+Use Homebrew to install Azure CLI:
+
+```bash
+brew update && brew install azure-cli
+```
+
+### Linux
+
+For Ubuntu or Debian, use these commands:
+
+```bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+For other distributions, check the [official Azure CLI installation guide](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
+
+## Log in to Azure
+
+1. Open a terminal or command prompt.
+2. Run the following command:
+
+```bash
+az login
+```
+
+3. Your default browser will open. Sign in with your Azure account credentials.
+4. After successful login, you'll see a JSON output with your subscription information.
+
+## Create a Service Principal
+
+1. Ensure you're logged in to Azure CLI.
+2. Run the following command to create a Service Principal:
+
+```bash
+az ad sp create-for-rbac --name "MyServicePrincipal" --role contributor --scopes /subscriptions/<subscription-id>
+```
+
+Replace `<subscription-id>` with your Azure subscription ID.
+
+3. Save the output JSON. It contains important credentials:
+   - `appId`: The client ID for your application
+   - `password`: The client secret
+   - `tenant`: The tenant ID
+
+This appID, password, tenantID are used for CI/CD of Github Actions.
+
+## Manage Multiple Subscriptions
+
+If you have more than one subscription:
+
+1. List all subscriptions:
+
+```bash
+az account list --output table
+```
+
+2. Set the active subscription:
+
+```bash
+az account set --subscription <subscription-id-or-name>
+```
+
+3. Verify the current subscription:
+
+```bash
+az account show
+```
+
+Remember to keep your Service Principal credentials and subscription information secure. Never share them publicly or commit them to version control systems.
